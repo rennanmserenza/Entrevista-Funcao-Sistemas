@@ -27,7 +27,8 @@ namespace FI.AtividadeEntrevista.DAL
                 new SqlParameter("Cidade", cliente.Cidade),
                 new SqlParameter("Logradouro", cliente.Logradouro),
                 new SqlParameter("Email", cliente.Email),
-                new SqlParameter("Telefone", cliente.Telefone)
+                new SqlParameter("Telefone", cliente.Telefone),
+                new SqlParameter("CPF", cliente.CPF)
             };
 
             DataSet ds = base.Consultar("FI_SP_IncClienteV2", parametros);
@@ -59,9 +60,10 @@ namespace FI.AtividadeEntrevista.DAL
 
         internal bool VerificarExistencia(string CPF)
         {
-            List<SqlParameter> parametros = new List<SqlParameter>();
-
-            parametros.Add(new SqlParameter("CPF", CPF));
+            List<SqlParameter> parametros = new List<SqlParameter>
+            {
+                new SqlParameter("CPF", CPF)
+            };
 
             DataSet ds = base.Consultar("FI_SP_VerificaCliente", parametros);
 
@@ -124,6 +126,7 @@ namespace FI.AtividadeEntrevista.DAL
                 new SqlParameter("Logradouro", cliente.Logradouro),
                 new SqlParameter("Email", cliente.Email),
                 new SqlParameter("Telefone", cliente.Telefone),
+                new SqlParameter("CPF", cliente.CPF),
                 new SqlParameter("ID", cliente.Id)
             };
 
@@ -164,7 +167,8 @@ namespace FI.AtividadeEntrevista.DAL
                         Nacionalidade = row.Field<string>("Nacionalidade"),
                         Nome = row.Field<string>("Nome"),
                         Sobrenome = row.Field<string>("Sobrenome"),
-                        Telefone = row.Field<string>("Telefone")
+                        Telefone = row.Field<string>("Telefone"),
+                        CPF = row.Field<string>("CPF")
                     };
 
                     lista.Add(cli);

@@ -14,7 +14,8 @@ $(document).ready(function () {
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").val()
+                "Telefone": $(this).find("#Telefone").val(),
+                "CPF": $(this).find("#CPF").val(),
             },
             error:
             function (r) {
@@ -30,7 +31,23 @@ $(document).ready(function () {
             }
         });
     })
-    
+
+    // Função para aplicar a máscara de CPF
+    function aplicarMascaraCPF(value) {
+        // Remove tudo que não é dígito
+        value = value.replace(/\D/g, "");
+
+        // Adiciona os pontos e o traço no lugar correto
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d{2})$/, "$1-$2");
+
+        return value;
+    }
+
+    $('#CPF').on("input change", function() {
+        $(this).val(aplicarMascaraCPF($(this).val()));
+    });
 })
 
 function ModalDialog(titulo, texto) {

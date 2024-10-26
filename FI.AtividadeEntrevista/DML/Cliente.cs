@@ -54,5 +54,10 @@
         /// Telefone
         /// </summary>
         public string Telefone { get; set; }
+
+        /// <summary>
+        /// CPF
+        /// </summary>
+        public string CPF { get; set; }
     }
 }

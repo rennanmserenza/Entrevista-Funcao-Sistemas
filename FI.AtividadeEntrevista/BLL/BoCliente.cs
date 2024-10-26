@@ -1,5 +1,6 @@
 ﻿using FI.AtividadeEntrevista.DAL;
 using FI.AtividadeEntrevista.DML;
+using FI.AtividadeEntrevista.Extensions;
 using System.Collections.Generic;
 
 namespace FI.AtividadeEntrevista.BLL
@@ -64,6 +65,16 @@ namespace FI.AtividadeEntrevista.BLL
         {
             DaoCliente cli = new DaoCliente();
             return cli.Pesquisa(iniciarEm, quantidade, campoOrdenacao, crescente, out qtd);
+        }
+
+        /// <summary>
+        /// Verifica se o CPF recebido é válido
+        /// </summary>
+        /// <param name="CPF"></param>
+        /// <returns></returns>
+        public bool CPFValido(string CPF)
+        {
+            return StringExtension.ValidarCPF(CPF);
         }
 
         /// <summary>

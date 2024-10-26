@@ -26,10 +26,12 @@ namespace FI.AtividadeEntrevista.DAL
             comando.Connection = conexao;
             comando.CommandType = CommandType.StoredProcedure;
             comando.CommandText = NomeProcedure;
+
             foreach (var item in parametros)
                 comando.Parameters.Add(item);
 
             conexao.Open();
+
             try
             {
                 comando.ExecuteNonQuery();
@@ -48,11 +50,13 @@ namespace FI.AtividadeEntrevista.DAL
             comando.Connection = conexao;
             comando.CommandType = CommandType.StoredProcedure;
             comando.CommandText = NomeProcedure;
+
             foreach (var item in parametros)
                 comando.Parameters.Add(item);
 
             SqlDataAdapter adapter = new SqlDataAdapter(comando);
             DataSet ds = new DataSet();
+
             conexao.Open();
 
             try
