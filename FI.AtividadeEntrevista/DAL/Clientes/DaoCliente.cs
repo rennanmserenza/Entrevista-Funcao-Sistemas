@@ -42,9 +42,9 @@ namespace FI.AtividadeEntrevista.DAL
         }
 
         /// <summary>
-        /// Inclui um novo cliente
+        /// Consultar um novo cliente
         /// </summary>
-        /// <param name="cliente">Objeto de cliente</param>
+        /// <param name="Id">Id do cliente</param>
         internal Cliente Consultar(long Id)
         {
             List<SqlParameter> parametros = new List<SqlParameter>
@@ -132,7 +132,6 @@ namespace FI.AtividadeEntrevista.DAL
 
             base.Executar("FI_SP_AltCliente", parametros);
         }
-
 
         /// <summary>
         /// Excluir Cliente

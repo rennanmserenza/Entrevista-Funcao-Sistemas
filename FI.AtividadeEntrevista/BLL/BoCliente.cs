@@ -78,7 +78,7 @@ namespace FI.AtividadeEntrevista.BLL
         }
 
         /// <summary>
-        /// VerificaExistencia
+        /// Verifica Existencia de um CPF
         /// </summary>
         /// <param name="CPF"></param>
         /// <returns></returns>
