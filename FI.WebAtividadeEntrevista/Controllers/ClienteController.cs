@@ -20,7 +20,7 @@ namespace WebAtividadeEntrevista.Controllers
             return model.Beneficiarios.GroupBy(b => b.CPF).Any(g => g.Count() > 1);
         }
 
-        private void IncluirBeneficarios(long idCliente, List<BeneficiarioModel> beneficiarioModels)
+        private void IncluirBeneficiarios(long idCliente, List<BeneficiarioModel> beneficiarioModels)
         {
             BoBeneficiario ben = new BoBeneficiario();
 
@@ -39,6 +39,84 @@ namespace WebAtividadeEntrevista.Controllers
                         );
                     }
                 });
+        }
+
+        private void AlterarBeneficiarios(long idCliente, List<BeneficiarioModel> beneficiarioModels)
+        {
+            BoBeneficiario ben = new BoBeneficiario();
+
+            var beneficiariosExistentes = ben
+                .ListarPorIdCliente(idCliente)
+                .Select(b => new BeneficiarioModel
+                {
+                    Id = b.Id,
+                    CPF = b.CPF,
+                    Nome = b.Nome,
+                    IdCliente = b.IdCliente,
+                }).ToList();
+
+            List<BeneficiarioModel> beneficiariosParaIncluir = new List<BeneficiarioModel>();
+            List<BeneficiarioModel> beneficiariosParaAlterar = new List<BeneficiarioModel>();
+            List<BeneficiarioModel> beneficiariosParaExcluir= new List<BeneficiarioModel>();
+
+            beneficiarioModels
+                .ForEach(x =>
+                {
+                    // Caso o beneficiario venha da tela com ID = 0,
+                    // significa que o mesmo acabou de ser criado ou que ocorreu erro ao envia-lo para tela.
+                    // caso ele exista no banco ele não será registrado.
+                        if (x.Id != 0)
+                            beneficiariosParaAlterar.Add(x);
+                        else
+                            if(beneficiariosExistentes.Count(y => y.CPF == x.CPF) == 0)
+                                beneficiariosParaIncluir.Add(x);
+                });
+
+            beneficiariosParaIncluir
+                .ForEach(x =>
+                {
+                    if (ben.CPFValido(x.CPF))
+                    {
+                        ben.Incluir(
+                            new Beneficiario
+                            {
+                                CPF = x.CPF,
+                                Nome = x.Nome,
+                                IdCliente = idCliente
+                            }
+                        );
+                    }
+                });
+
+            beneficiariosParaAlterar
+                .ForEach(x =>
+                {
+                    ben.Alterar(
+                        new Beneficiario
+                        {
+                            Id = x.Id,
+                            Nome = x.Nome,
+                            CPF = x.CPF,
+                            IdCliente = idCliente
+                        }
+                    );
+                });
+
+            // Identificar beneficiários para excluir
+            var cpfsParaIncluirAlterar = beneficiariosParaIncluir
+                .Select(b => b.CPF)
+                .Concat(beneficiariosParaAlterar.Select(b => b.CPF))
+                .ToList();
+
+            beneficiariosParaExcluir = beneficiariosExistentes
+                .Where(existing => !cpfsParaIncluirAlterar.Contains(existing.CPF))
+                .ToList();
+
+            // Excluir beneficiários que não estão mais associados
+            beneficiariosParaExcluir.ForEach(x =>
+            {
+                ben.Excluir(x.Id); // Supondo que você tenha um método Excluir na BoBeneficiario
+            });
         }
 
         public ActionResult Incluir()
@@ -93,7 +171,7 @@ namespace WebAtividadeEntrevista.Controllers
 
                 if (model.Beneficiarios.Count > 0)
                 {
-                    IncluirBeneficarios(model.Id, model.Beneficiarios);
+                    IncluirBeneficiarios(model.Id, model.Beneficiarios);
                 }
 
                 return Json("Cadastro efetuado com sucesso");
@@ -103,8 +181,10 @@ namespace WebAtividadeEntrevista.Controllers
         [HttpGet]
         public ActionResult Alterar(long id)
         {
-            BoCliente bo = new BoCliente();
-            Cliente cliente = bo.Consultar(id);
+            BoCliente boCliente = new BoCliente();
+            BoBeneficiario boBeneficiario = new BoBeneficiario();
+
+            Cliente cliente = boCliente.Consultar(id);
             ClienteModel model = null;
 
             if (cliente != null)
@@ -122,6 +202,13 @@ namespace WebAtividadeEntrevista.Controllers
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
                     CPF = cliente.CPF,
+                    Beneficiarios = boBeneficiario.ListarPorIdCliente(cliente.Id).Select(b => new BeneficiarioModel
+                    {
+                        Id = b.Id,
+                        CPF = b.CPF,
+                        Nome = b.Nome,
+                        IdCliente = b.IdCliente,
+                    }).ToList()
                 };
             }
 
@@ -147,11 +234,6 @@ namespace WebAtividadeEntrevista.Controllers
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, "05EX07 - O CPF inserido é inválido"));
             }
-            else if (bo.VerificarExistencia(model.CPF))
-            {
-                Response.StatusCode = 400;
-                return Json(string.Join(Environment.NewLine, "05EX08 - Não foi possível incluir um novo usuário"));
-            }
             else
             {
                 bo.Alterar(new Cliente()
@@ -168,6 +250,11 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone,
                     CPF = model.CPF,
                 });
+
+                if (model.Beneficiarios.Count > 0)
+                {
+                    AlterarBeneficiarios(model.Id, model.Beneficiarios);
+                }
 
                 return Json("Cadastro alterado com sucesso");
             }

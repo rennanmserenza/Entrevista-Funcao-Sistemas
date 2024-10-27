@@ -111,14 +111,14 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
         /// <summary>
         /// Lista todos os beneficiarios
         /// </summary>
-        internal List<Beneficiario> Listar()
+        internal List<Beneficiario> ListarPorIdCliente(long id)
         {
             List<SqlParameter> parametros = new List<SqlParameter>
             {
-                new SqlParameter("Id", 0)
+                new SqlParameter("IdCliente", id)
             };
 
-            DataSet ds = base.Consultar("FI_SP_ConsBeneficiario", parametros);
+            DataSet ds = Consultar("FI_SP_ConsBeneficiario", parametros);
             List<Beneficiario> ben = Converter(ds);
 
             return ben;
@@ -167,7 +167,8 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
                     {
                         Id = row.Field<long>("Id"),
                         Nome = row.Field<string>("Nome"),
-                        CPF = row.Field<string>("CPF")
+                        CPF = row.Field<string>("CPF"),
+                        IdCliente = row.Field<long>("IdCliente")
                     };
 
                     lista.Add(cli);

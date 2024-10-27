@@ -51,10 +51,10 @@ namespace FI.AtividadeEntrevista.BLL
         /// <summary>
         /// Lista os beneficiarios
         /// </summary>
-        public List<Beneficiario> Listar()
+        public List<Beneficiario> ListarPorIdCliente(long id)
         {
             DaoBeneficiario ben = new DaoBeneficiario();
-            return ben.Listar();
+            return ben.ListarPorIdCliente(id);
         }
 
         /// <summary>
