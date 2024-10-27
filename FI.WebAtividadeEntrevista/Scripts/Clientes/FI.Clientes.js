@@ -1,5 +1,57 @@
-﻿
+﻿let beneficiarios = [];
+
 $(document).ready(function () {
+    // Evento de clique para adicionar beneficiário
+    $('#formDeBeneficiario').submit(function (e) {
+        e.preventDefault();
+
+        let cpf = $('#CPFBeneficiario').val();
+        let nome = $('#NomeBeneficiario').val();
+
+        // Verifica se o CPF já está listado
+        if (beneficiarios.some(b => b.CPF === cpf)) {
+            ModalDialog("Erro", "Este CPF já foi adicionado para o beneficiário.");
+            return;
+        }
+
+        // Adiciona beneficiário à lista e atualiza a tabela
+        beneficiarios.push({ CPF: cpf, Nome: nome });
+        atualizarTabelaBeneficiarios();
+
+        // Limpa os campos da modal
+        $('#CPFBeneficiario').val('');
+        $('#NomeBeneficiario').val('');
+    });
+
+    // Atualizar tabela de beneficiários
+    function atualizarTabelaBeneficiarios() {
+        $('#tabelaDeBeneficarios').empty();
+        beneficiarios.forEach((b, index) => {
+            $('#tabelaDeBeneficarios').append(`
+                <tr>
+                    <td>${b.CPF}</td>
+                    <td>${b.Nome}</td>
+                    <td><button type="button" class="btn btn-warning btn-sm" onclick="alterarBeneficiario(${index})">Alterar</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removerBeneficiario(${index})">Remover</button></td>
+                </tr>
+            `);
+        });
+    }
+
+    // Função para alterar beneficiário
+    window.alterarBeneficiario = function (index) {
+        ModalDialog("Aviso", "Esta função ainda não foi desenvolvida para o projeto.");
+    }
+
+    // Função para remover beneficiário
+    window.removerBeneficiario = function (index) {
+        if (confirm("Tem certeza que deseja excluir este beneficiário?")) {
+            beneficiarios.splice(index, 1);
+            atualizarTabelaBeneficiarios();
+        }
+    }
+
+
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
         $.ajax({
@@ -7,15 +59,16 @@ $(document).ready(function () {
             method: "POST",
             data: {
                 "NOME": $(this).find("#Nome").val(),
-                "CEP": $(this).find("#CEP").val(),
-                "Email": $(this).find("#Email").val(),
                 "Sobrenome": $(this).find("#Sobrenome").val(),
+                "CPF": $(this).find("#CPF").val(),
+                "CEP": $(this).find("#CEP").val(),
                 "Nacionalidade": $(this).find("#Nacionalidade").val(),
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
+                "Email": $(this).find("#Email").val(),
                 "Telefone": $(this).find("#Telefone").val(),
-                "CPF": $(this).find("#CPF").val(),
+                "Beneficiarios": beneficiarios // Envio dos beneficiarios vinculados ao cliente.
             },
             error:
             function (r) {
@@ -28,6 +81,8 @@ $(document).ready(function () {
             function (r) {
                 ModalDialog("Sucesso!", r)
                 $("#formCadastro")[0].reset();
+                beneficiarios = []; // Limpa a lista de beneficiários após o envio
+                atualizarTabelaBeneficiarios();
             }
         });
     })

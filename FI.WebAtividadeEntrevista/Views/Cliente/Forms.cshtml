@@ -80,7 +80,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="pull-left">
-                <button class="btn btn-sm btn-primary">Beneficiários</button>
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalDeBeneficiarios">Beneficiários</button>
             </div>
         </div>
         <div class="col-lg-6">
@@ -91,5 +91,41 @@
         </div>
     </div>
 
-
 </form>
+
+<!-- Modal para cadastro de Beneficiário -->
+<div class="modal fade" id="modalDeBeneficiarios" tabindex="-1" role="dialog" aria-labelledby="modalDeBeneficiariosLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="meuModalLabel">Beneficiários</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:-20px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formDeBeneficiario">
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="CPFBeneficiario">CPF:</label>
+                                <input required="required" type="text" class="form-control" id="CPFBeneficiario" name="CPFBeneficiario" placeholder="Ex.: 010.011.111-00" maxlength="14">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="NomeBeneficiario">Nome:</label>
+                                <input required="required" type="text" class="form-control" id="NomeBeneficiario" name="NomeBeneficiario" placeholder="Ex.: João" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="margin-top: 28px">
+                            <button id="adicionarBeneficiario" type="submit" class="btn btn-sm btn-success">Incluir</button>
+                        </div>
+                    </div>
+                </form>
+
+                @Html.Partial("Partial/_TabelaBeneficiarios")
+            </div>
+        </div>
+    </div>
+</div>

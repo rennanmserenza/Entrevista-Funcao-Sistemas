@@ -1,4 +1,4 @@
-﻿CREATE PROC FI_SP_PesqBeneficiario
+﻿CREATE OR ALTER PROC FI_SP_PesqBeneficiario
 	@iniciarEm int,
 	@quantidade int,
 	@campoOrdenacao varchar(200),

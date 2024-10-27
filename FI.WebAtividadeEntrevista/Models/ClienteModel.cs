@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAtividadeEntrevista.Models
 {
@@ -67,6 +68,12 @@ namespace WebAtividadeEntrevista.Models
         /// CPF
         /// </summary>
         [Required]
+        [MinLength(14, ErrorMessage = "Número de caracteres inválido")]
         public string CPF { get; set; }
+
+        /// <summary>
+        /// Lista com os Beneficiarios cadastrados para o cliente
+        /// </summary>
+        public List<BeneficiarioModel> Beneficiarios { get; set; }
     }
 }

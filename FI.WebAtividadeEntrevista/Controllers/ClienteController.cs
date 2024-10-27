@@ -15,6 +15,32 @@ namespace WebAtividadeEntrevista.Controllers
             return View();
         }
 
+        private bool VerificaBeneficiarioCpfDuplicado(ClienteModel model)
+        {
+            return model.Beneficiarios.GroupBy(b => b.CPF).Any(g => g.Count() > 1);
+        }
+
+        private void IncluirBeneficarios(long idCliente, List<BeneficiarioModel> beneficiarioModels)
+        {
+            BoBeneficiario ben = new BoBeneficiario();
+
+            beneficiarioModels
+                .ForEach(x =>
+                {
+                    if (ben.CPFValido(x.CPF))
+                    {
+                        ben.Incluir(
+                            new Beneficiario
+                            {
+                                CPF = x.CPF,
+                                Nome = x.Nome,
+                                IdCliente = idCliente
+                            }
+                        );
+                    }
+                });
+        }
+
         public ActionResult Incluir()
         {
             return View();
@@ -34,7 +60,12 @@ namespace WebAtividadeEntrevista.Controllers
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, erros));
             }
-            else if(!bo.CPFValido(model.CPF))
+            else if (VerificaBeneficiarioCpfDuplicado(model))
+            {
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "05EX01 - CPF duplicado entre beneficiários"));
+            }
+            else if (!bo.CPFValido(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, "05EX03 - O CPF inserido é inválido"));
@@ -42,7 +73,7 @@ namespace WebAtividadeEntrevista.Controllers
             else if (bo.VerificarExistencia(model.CPF))
             {
                 Response.StatusCode = 400;
-                return Json(string.Join(Environment.NewLine, "05EX09 - Não foi possível incluir um novo usuário"));
+                return Json(string.Join(Environment.NewLine, "05EX09 - Não foi possível incluir um novo cliente"));
             }
             else
             {
@@ -59,6 +90,11 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone,
                     CPF = model.CPF,
                 });
+
+                if (model.Beneficiarios.Count > 0)
+                {
+                    IncluirBeneficarios(model.Id, model.Beneficiarios);
+                }
 
                 return Json("Cadastro efetuado com sucesso");
             }

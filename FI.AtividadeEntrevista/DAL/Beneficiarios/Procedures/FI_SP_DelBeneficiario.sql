@@ -1,4 +1,4 @@
-﻿CREATE PROC FI_SP_DelBeneficiario
+﻿CREATE OR ALTER PROC FI_SP_DelBeneficiario
 	@ID BIGINT
 AS
 BEGIN

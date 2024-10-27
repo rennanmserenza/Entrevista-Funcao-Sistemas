@@ -58,7 +58,7 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
         /// Verifica a existência de beneficiario cadastrado para o cliente selecionado.
         /// </summary>
         /// <param name="Id">Id do beneficiario</param>
-        internal bool VerificarExistencia(string CPF, int idCliente)
+        internal bool VerificarExistencia(string CPF, long idCliente)
         {
             List<SqlParameter> parametros = new List<SqlParameter>
             {
