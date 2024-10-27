@@ -15,6 +15,11 @@ namespace WebAtividadeEntrevista.Controllers
             return View();
         }
 
+        private bool VerificaBeneficiarioPossuiCpfCliente(ClienteModel model)
+        {
+            return model.Beneficiarios.Any(x => x.CPF == model.CPF);
+        }
+
         private bool VerificaBeneficiarioCpfDuplicado(ClienteModel model)
         {
             return model.Beneficiarios.GroupBy(b => b.CPF).Any(g => g.Count() > 1);
@@ -138,6 +143,11 @@ namespace WebAtividadeEntrevista.Controllers
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, erros));
             }
+            if (VerificaBeneficiarioPossuiCpfCliente(model))
+            {
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "05EX02 - CPF do cliente consta em um dos beneficiários."));
+            }
             else if (VerificaBeneficiarioCpfDuplicado(model))
             {
                 Response.StatusCode = 400;
@@ -228,6 +238,11 @@ namespace WebAtividadeEntrevista.Controllers
 
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, erros));
+            }
+            if (VerificaBeneficiarioPossuiCpfCliente(model))
+            {
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "05EX04 - CPF do cliente consta em um dos beneficiários."));
             }
             else if (!bo.CPFValido(model.CPF))
             {
